@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot Web</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+</head>
+<body>
+    <div class="container" style="text-align: center;">
+        <h1>Chatbot Web</h1>
+        <div id="chat-container">
+            <img src="{{ url_for('static', filename='robo.png') }}" alt="Imagem do Robô">
+            <div id="chat-log"></div>
+            <div id="user-input-container">
+                <input type="text" id="user-input" placeholder="Faça uma pergunta...">
+                <button onclick="sendMessage()">Enviar</button>
+                <button id="limpar" onclick="limparPergunta()">Limpar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script>
+        function sendMessage() {
+            var userInput = $("#user-input").val();
+
+            if (userInput.trim() !== "") {
+                $("#chat-log").append("<div><strong>Você:</strong> " + userInput + "</div>");
+
+                $.ajax({
+                    type: "POST",
+                    url: "/get_response",
+                    data: { user_input: userInput },
+                    success: function(response) {
+                        $("#chat-log").append("<div><strong>Bot:</strong> " + response.response + "</div>");
+                        $("#user-input").val("");
+                    }
+                });
+            }
+        }
+    </script>
+</body>
+</html>
